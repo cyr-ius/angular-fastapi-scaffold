@@ -85,10 +85,10 @@ if [ -d "$WORKSPACE/.agents" ]; then
   echo ""
   echo "🧠  Skill — installation des dépendances..."
   cd "$WORKSPACE"
-  npx --yes skills add https://github.com/fastapi/fastapi --skill fastapi  --agent claude-code -p -y
-  npx --yes skills add https://github.com/bilalmk/todo_correct --skill sqlmodel-expert  --agent claude-code -p -y
-  npx --yes skills add https://github.com/angular/angular --skill angular-developer  --agent claude-code -p -y
-  npx --yes skills add https://github.com/cyr-ius/angular-fastapi-scaffold --skill development-standards  --agent claude-code -p -y
+  npx --yes skills add https://github.com/fastapi/fastapi --skill fastapi  -p -y
+  npx --yes skills add https://github.com/bilalmk/todo_correct --skill sqlmodel-expert  -p -y
+  npx --yes skills add https://github.com/angular/angular --skill angular-developer  -p -y
+  npx --yes skills add https://github.com/cyr-ius/angular-fastapi-scaffold --skill development-standards  -p -y
   echo "  ✅  Skills installed"
 fi
 
