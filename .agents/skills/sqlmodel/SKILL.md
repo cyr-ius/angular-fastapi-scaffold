@@ -561,7 +561,7 @@ DATABASE_URL=sqlite:///./database.db
 DATABASE_ECHO=false
 
 # .env.production — production (PostgreSQL)
-DATABASE_URL=postgresql+psycopg2://portalcrane:secret@db:5432/portalcrane
+DATABASE_URL=postgresql+psycopg2://dba_admin:secret@db:5432/my_base
 DATABASE_ECHO=false
 ```
 

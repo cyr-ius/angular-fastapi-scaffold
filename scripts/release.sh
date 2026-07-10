@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Portalcrane - Release helper
+# Release helper
 #
 # Bumps the frontend version, commits it, creates the matching git tag and
 # pushes everything. Because the version bump is committed *before* the tag is
