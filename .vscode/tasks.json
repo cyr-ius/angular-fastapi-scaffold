@@ -1,10 +1,10 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "npm",
-			"script": "start",
-			"path": "frontend",
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "start",
+      "path": "frontend",
       "isBackground": true,
       "problemMatcher": {
         "owner": "typescript",
@@ -19,8 +19,8 @@
           }
         }
       },
-			"label": "npm: start - frontend",
-			"detail": "ng serve"
-		}
-	]
+      "label": "npm: start - frontend",
+      "detail": "ng serve"
+    }
+  ]
 }
