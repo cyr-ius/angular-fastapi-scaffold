@@ -93,9 +93,10 @@ if [ -d "$WORKSPACE/.agents" ]; then
     npx --yes skills add https://github.com/bilalmk/todo_correct --skill sqlmodel-expert -p -y
   fi
   if [ -d "$WORKSPACE/.agents/angular-developer"]; then
-    npx --yes skills update https://github.com/angular/angular --skill angular-developer -p -y  fi
+    npx --yes skills update https://github.com/angular/angular --skill angular-developer -p -y
   else
-    npx --yes skills add https://github.com/angular/angular --skill angular-developer -p -y  fi
+    npx --yes skills add https://github.com/angular/angular --skill angular-developer -p -y
+  fi
   if [ -d "$WORKSPACE/.agents/development-standards"]; then
     npx --yes skills update https://github.com/cyr-ius/angular-fastapi-scaffold --skill development-standards -p -y
   else
