@@ -5,7 +5,6 @@ set -euo pipefail
 WORKSPACE="$1"
 BACKEND_DIR="$WORKSPACE/backend"
 FRONTEND_DIR="$WORKSPACE/frontend"
-SKILLS_PATH="$WORKSPACE/.agents/skills"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  🚀  Post-Create Setup — FastAPI + Angular DevContainer  "
@@ -79,37 +78,18 @@ if [ -f "$BACKEND_DIR/alembic.ini" ]; then
 fi
 
 # ── 6. Skills installation ─────────────────────────────────────────────────────
-if [ -d "$WORKSPACE/.agents" ]; then
-  echo ""
-  echo "🧠  Skill — installation des dépendances..."
-  cd "$WORKSPACE"
-  if [ -d "$SKILLS_PATH/fastapi" ]; then
-    npx --yes skills update https://github.com/fastapi/fastapi --skill fastapi -p -y
-  else
-      npx --yes skills add https://github.com/fastapi/fastapi --skill fastapi -p -y
-  fi
-  if [ -d "$SKILLS_PATH/sqlmodel-expert" ]; then
-    npx --yes skills update https://github.com/bilalmk/todo_correct --skill sqlmodel-expert -p -y
-  else
-    npx --yes skills add https://github.com/bilalmk/todo_correct --skill sqlmodel-expert -p -y
-  fi
-  if [ -d "$SKILLS_PATH/angular-developer" ]; then
-    npx --yes skills update https://github.com/angular/angular --skill angular-developer -p -y
-  else
-    npx --yes skills add https://github.com/angular/angular --skill angular-developer -p -y
-  fi
-  if [ -d "$SKILLS_PATH/development-standards" ]; then
-    npx --yes skills update https://github.com/cyr-ius/angular-fastapi-scaffold --skill development-standards -p -y
-  else
-    npx --yes skills add https://github.com/cyr-ius/angular-fastapi-scaffold --skill development-standards -p -y
-  fi
-
-  if [ ! -d "$WORKSPACE/.claude" ]; then
-    mkdir -p "$WORKSPACE/.claude"
-    ln -s "$WORKSPACE/.agents/skills" "$WORKSPACE/.claude/skills"
-  fi
-  echo "  ✅  Skills installed"
+# Framework skills only: the development standards come from the security-review
+# MCP server (see AGENTS.md and .mcp.json).
+echo ""
+echo "🧠  Skills — framework documentation..."
+cd "$WORKSPACE"
+npx --yes skills add https://github.com/fastapi/fastapi --skill fastapi -p -y
+npx --yes skills add https://github.com/angular/angular --skill angular-developer -p -y
+if [ ! -e "$WORKSPACE/.claude/skills" ]; then
+  mkdir -p "$WORKSPACE/.claude"
+  ln -s ../.agents/skills "$WORKSPACE/.claude/skills"
 fi
+echo "  ✅  Skills installed"
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

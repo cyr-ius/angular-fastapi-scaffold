@@ -16,6 +16,8 @@ shipped as one Docker image.
 4. **`README.md` is up to date** when a setting, a command or a feature visible to the
    operator changed.
 5. **The [security invariants](#security-invariants) still hold.**
+6. **A security review of the changes was made with the `security-review` MCP server** when
+   it is connected (see [Security review](#security-review)).
 
 If one of these steps is deliberately skipped (e.g. an internal refactoring with no visible
 effect), say so explicitly in the answer or in the pull request description, with the reason.
@@ -38,8 +40,8 @@ anyway.
 Before making any change:
 
 1. Read the relevant source files and follow their existing patterns.
-2. Read and apply the `development-standards` skill: its rules (style, naming, architecture,
-   error handling, security, tests, dependencies, documentation) are mandatory.
+2. Get the development standards of the technologies you touch from the MCP server (see
+   [Coding conventions](#coding-conventions)) and apply them.
 3. Make the smallest change that does the job.
 
 Do not:
@@ -52,6 +54,20 @@ Do not:
 
 If a tool is missing or a command fails, report the command, the cause when known, and do
 not hide the failure.
+
+## Coding conventions
+
+The development standards are provided by the `security-review` MCP server (declared in
+`.mcp.json`, with `context7` for the framework documentation). Read them before writing code:
+
+- tool `get_development_standards`, by technology (`python`, `angular`...) or by file
+  (`pyproject.toml`, `angular.json`...);
+- tool `list_development_standards` to see the catalog;
+- resource `standard://<slug>` to read one standard.
+
+Do not copy them here. This file only keeps the rules specific to this repository; in case of
+conflict, it wins. A standard never weakens security: keep the safe behavior and report the
+conflict. If the server is not connected, say so, and follow the existing code.
 
 ## Technology stack
 
@@ -140,6 +156,28 @@ cd backend && DATA_DIR=../.data_env uv run alembic revision --autogenerate -m "a
 - `SecurityHeadersMiddleware` sends a strict Content-Security-Policy: no inline script (the
   frontend build does not inline critical CSS for that reason), no framing.
 - The image runs as the unprivileged `app` user.
+
+## Security review
+
+When the `security-review` MCP server is connected (its prompts and tools appear in the
+session), a security review of the changes is **systematic** before declaring a task done or
+opening a pull request, whatever the size of the change:
+
+1. Run the `security-review` prompt (or `api-security-review` for the API,
+   `configuration-review` for the Dockerfile, workflows and YAML, `dependency-review` when
+   `pyproject.toml`, `uv.lock` or `package.json` change) on the modified files, with the diff
+   as context.
+2. Use `scan_code` and `get_review_checklist` during the review.
+3. Save the result **once** with `save_security_report` (`project`: the repository name, plus
+   `branch` and `commit_sha` when known).
+4. Fix the `critical` and `high` findings before finishing, with a test covering the fix. Fix
+   or justify the others and propose their status with `propose_finding_status`: an agent never
+   changes a status, a person validates the proposal in the web interface.
+5. Summarize the review (report identifier, findings and what was done) in the answer and in
+   the pull request description.
+
+If the server is not connected or does not answer, say so explicitly: never claim a review
+that was not made.
 
 ## Continuous integration and releases
 
