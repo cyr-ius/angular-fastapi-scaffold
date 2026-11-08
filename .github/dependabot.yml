@@ -1,46 +1,38 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
-
+---
+# Projects created from this template target their `dev` branch: web/sync.sh of
+# cyr-ius/.github adds `target-branch: "dev"` to every entry.
 version: 2
 updates:
   - package-ecosystem: "github-actions"
-    target-branch: "dev"
     directory: "/"
     schedule:
       interval: "weekly"
   - package-ecosystem: "uv"
-    target-branch: "dev"
     directory: "/backend"
     schedule:
       interval: "weekly"
     groups:
       fastapi-pydantic:
         patterns:
-          - "fastapi"
-          - "pydantic"
-          - "pydantic-settings"
+          - "fastapi*"
+          - "pydantic*"
       sqlmodel-sqlalchemy:
         patterns:
           - "sqlmodel"
           - "sqlalchemy"
           - "alembic"
   - package-ecosystem: "npm"
-    target-branch: "dev"
     directory: "/frontend"
     schedule:
       interval: "weekly"
-    ignore:
-      - dependency-name: "typescript"
-        update-types:
-          - "version-update:semver-major"
-          - "version-update:semver-minor"
     groups:
       angular:
         patterns:
           - "@angular/*"
           - "@angular-devkit/*"
-          - "zone.js"
           - "rxjs"
           - "typescript"
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"

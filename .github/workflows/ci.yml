@@ -1,0 +1,30 @@
+---
+name: CI
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    uses: cyr-ius/.github/.github/workflows/web-ci.yml@v1
+    with:
+      backend-dir: backend
+      backend-run: |
+        uv run mypy app
+        uv run pytest
+        # pre-commit hooks (ruff, prettier, codespell...) on every file
+        cd "$GITHUB_WORKSPACE" && uv run --project backend prek run --all-files --show-diff-on-failure
+      frontend-run: |
+        npm run build
+        npx ng test --watch=false

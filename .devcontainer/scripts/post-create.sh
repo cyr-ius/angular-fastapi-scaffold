@@ -60,7 +60,7 @@ if [ -f "$WORKSPACE/.pre-commit-config.yaml" ]; then
   echo ""
   echo "🪝  Installing prek hooks..."
   cd "$WORKSPACE"
-  uv run prek install --overwrite --install-hooks
+  prek install --overwrite --install-hooks
 else
   echo "  ℹ️  .pre-commit-config.yaml absent — hooks non installés"
 fi

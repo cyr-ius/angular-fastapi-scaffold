@@ -1,191 +1,161 @@
 # AGENTS.md
 
-Instructions for AI agents operating in this repository.
+This file is the **single reference** for every AI agent (Claude, Copilot, Codex, Cursor...)
+working in this repository. Change the rules here, not in agent-specific files.
 
-## Purpose
+The application is a FastAPI backend (`backend/`) serving an Angular frontend (`frontend/`),
+shipped as one Docker image.
 
-This document defines the rules and workflow that AI agents must follow when analyzing, modifying, testing, or deploying this repository.
+## A task is done only when
 
-The objective is to:
+1. **The added or fixed behavior is covered by a relevant test**, existing or new
+   (see [Tests](#tests)).
+2. **The checks matching the modified files pass**, and only those
+   (see [Checks by modified files](#checks-by-modified-files)).
+3. **A schema change comes with its Alembic migration** (see [Database](#database)).
+4. **`README.md` is up to date** when a setting, a command or a feature visible to the
+   operator changed.
+5. **The [security invariants](#security-invariants) still hold.**
 
-- quickly understand the project structure;
-- prepare a consistent local development environment;
-- apply the required development standards;
-- run the appropriate validation checks;
-- avoid common dependency and implementation mistakes.
+If one of these steps is deliberately skipped (e.g. an internal refactoring with no visible
+effect), say so explicitly in the answer or in the pull request description, with the reason.
+Never declare a task done without running the checks of the modified files.
+
+### Checks by modified files
+
+Run only the checks of the areas touched by the change (`git diff --stat`); CI runs everything
+anyway.
+
+| Modified files                     | Checks                                                                                                  |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `backend/**`                       | `cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy app && uv run pytest` |
+| `frontend/**`                      | `cd frontend && npm run build && npx ng test --watch=false`                                             |
+| `Dockerfile`, `docker-compose.yml` | `docker compose up -d --build`, then `curl -f http://127.0.0.1:8000/api/health`                         |
+| any file                           | `prek run --files <files>` (the pre-commit hooks, also run by CI)                                       |
 
 ## Agent behavior
 
-Before making any change, AI agents must:
+Before making any change:
 
-1. Read and understand the relevant source files.
-2. Identify existing architectural patterns and conventions.
-3. Read and apply the `development-standards` skill.
-4. Make the smallest possible change required.
-5. Run the appropriate verification commands.
-6. Clearly report performed changes and validation results.
+1. Read the relevant source files and follow their existing patterns.
+2. Read and apply the `development-standards` skill: its rules (style, naming, architecture,
+   error handling, security, tests, dependencies, documentation) are mandatory.
+3. Make the smallest change that does the job.
 
-AI agents must not:
+Do not:
 
-- introduce new dependencies without justification;
-- replace existing technologies or patterns without approval;
-- manually modify generated files;
-- ignore existing conventions;
-- bypass failing validation checks;
-- create duplicated implementations when an existing component can be extended.
+- add a dependency without a reason stated in the answer;
+- replace a technology or a pattern of the project without approval;
+- edit generated files (`uv.lock`, `package-lock.json`) by hand: use `uv` and `npm`;
+- bypass a failing check (`--no-verify`, `# noqa` or `# type: ignore` without a reason);
+- duplicate an existing component instead of extending it.
 
-## Development standards
-
-All coding conventions, architectural rules, security practices, and development guidelines are defined in the `development-standards` skill.
-
-AI agents **must read and follow the `development-standards` skill before making any code changes**.
-
-The rules defined in this skill are mandatory and apply to:
-
-- code style and formatting;
-- naming conventions;
-- project architecture;
-- framework usage;
-- error handling;
-- security requirements;
-- testing practices;
-- dependency management;
-- documentation standards.
-
-Any implementation, modification, or code review performed in this repository must comply with the `development-standards` skill.
+If a tool is missing or a command fails, report the command, the cause when known, and do
+not hide the failure.
 
 ## Technology stack
 
-### Backend
-
-- Python `>= 3.14`
-- FastAPI
-- Pydantic 2
-- Managed with `uv`
-
-### Frontend
-
-- Angular
-- TypeScript
-- Node.js `>= 22`
-- npm
-- Angular CLI
+- **Backend**: Python 3.14, FastAPI, Pydantic 2, SQLModel (async SQLAlchemy, SQLite by
+  default), Alembic, PyJWT, bcrypt; managed with `uv` (`pyproject.toml`, `uv.lock`).
+- **Frontend**: Angular 22 (standalone components, signals, zoneless), Bootstrap 5,
+  Vitest; Node.js 24, npm (`package-lock.json`).
+- **Image**: multi-stage `Dockerfile` (Node build, `uv sync --locked`, Python runtime), runs
+  as the unprivileged `app` user, data in the `/var/lib/app` volume.
 
 ## Project structure
 
-```
+```text
 .
-├── backend/          # FastAPI backend
-├── frontend/         # Angular frontend
-├── scripts/          # Automation and deployment scripts
-└── AGENTS.md         # AI agent instructions
+├── backend/
+│   ├── app/
+│   │   ├── main.py           # application, lifespan (migrations, first admin), SPA serving
+│   │   ├── config.py         # settings from the environment
+│   │   ├── database.py       # async engine, sessions, migrate()
+│   │   ├── models.py         # SQLModel tables
+│   │   ├── security.py       # passwords, session tokens, security headers
+│   │   ├── dependencies.py   # SessionDep, CurrentUser
+│   │   ├── routers/          # one module per API area, all under /api
+│   │   └── migrations/       # Alembic environment and revisions
+│   └── tests/                # pytest, one file per area
+├── frontend/src/app/
+│   ├── core/                 # auth service, interceptor, guard, models
+│   └── features/             # one folder per page (login, home...)
+├── Dockerfile
+├── docker-compose.yml
+└── AGENTS.md
 ```
 
-## System requirements
-
-The development environment requires:
-
-- Python `>= 3.14`
-- `uv` installed: https://docs.astral.sh/uv/
-- Node.js `>= 22`
-- npm
-
-## Dependency installation
-
-### Backend
+## Development
 
 ```bash
-cd backend
-uv sync
+(cd backend && uv sync)                    # Python dependencies, dev group included
+(cd frontend && npm ci)                    # Node dependencies from package-lock.json
+prek install                               # pre-commit hooks
+
+cd backend && DATA_DIR=../.data_env COOKIE_SECURE=false \
+  uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+cd frontend && npm start                   # http://localhost:4200, /api proxied to :8000
 ```
 
-Do not use `pip install -r requirements.txt`.
+The first start creates the `admin` account and logs its password once.
+`COOKIE_SECURE=false` is for plain HTTP development only.
 
-The Python project is managed through:
+## Settings
 
-- `pyproject.toml`
-- `uv.lock`
+Read from the environment (or `backend/.env`) by `app/config.py`: `APP_NAME`, `DATA_DIR`
+(database and generated secret key, `/var/lib/app` in the image), `DATABASE_URL`,
+`SECRET_KEY` (generated in `DATA_DIR` when empty), `ACCESS_TOKEN_EXPIRE_MINUTES`,
+`COOKIE_SECURE`, `ADMIN_USERNAME`, `SWAGGER_ENABLED` (`/api/docs`), `LOG_LEVEL`.
+`APP_VERSION` is set by the image from the release tag.
 
-### Frontend
+## Database
+
+The application applies the migrations at startup (`migrate()` in the lifespan). After
+changing `app/models.py`, generate and review the revision, then commit it:
 
 ```bash
-cd frontend
-npm ci
+cd backend && DATA_DIR=../.data_env uv run alembic revision --autogenerate -m "add item table"
 ```
 
-Prefer `npm ci` over `npm install` to respect `package-lock.json`.
+## Tests
 
-## Verification commands
+- Backend: pytest in `backend/tests/`, through `TestClient` (the lifespan runs, on a
+  temporary `DATA_DIR`). Test the behavior through the HTTP API, including the refusals
+  (401, 403, 404, validation errors), not only the nominal case.
+- Frontend: Vitest specs next to the code (`*.spec.ts`), `HttpTestingController` for the
+  HTTP calls.
 
-### Backend
+## Security invariants
 
-```bash
-cd backend
-uv run ruff check app
-uv run ruff format --check app
-uv run mypy app
-```
+- The session token is a signed JWT (HS256, `exp` required) in an **HttpOnly,
+  `SameSite=Strict`, `Secure` cookie** scoped to `/api`; it is never readable by
+  JavaScript, never stored in `localStorage`, never in a URL.
+- Every route under `/api` other than `/api/health` and `/api/auth/login` requires
+  `CurrentUser` (or a stricter dependency).
+- Login answers the same error, in the same time, for an unknown user and a wrong password.
+- Passwords are only stored as bcrypt hashes; secrets never appear in logs (except the
+  one-time initial admin password).
+- The SPA route never serves a file outside `FRONTEND_DIR` (path traversal), and unknown
+  `/api/*` paths answer 404, not `index.html`.
+- `SecurityHeadersMiddleware` sends a strict Content-Security-Policy: no inline script (the
+  frontend build does not inline critical CSS for that reason), no framing.
+- The image runs as the unprivileged `app` user.
 
-### Frontend
+## Continuous integration and releases
 
-```bash
-cd frontend
-npm run build
-```
+The workflows call the reusable `web-` workflows of
+[cyr-ius/.github](https://github.com/cyr-ius/.github): `ci.yml` (checks above),
+`docker.yml` (build and smoke test of the image on every pull request), `codeql.yml`.
 
-## Running in development mode
+**After creating a project from this template:**
 
-### Backend
+1. Rename the application: `name` in `docker-compose.yml`, `APP_NAME` default in
+   `app/config.py`, `<title>` in `frontend/src/index.html`.
+2. Create the `dev` branch and generate the release workflows (`publish.yml`, Release
+   Please, docs) from a clone of cyr-ius/.github: `../dotgithub/web/sync.sh .`
+3. Create the `DOCKERHUB_TOKEN` repository secret.
 
-```bash
-cd backend
-uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm start
-```
-
-## Error reporting
-
-If a required tool is missing:
-
-- clearly report the environment limitation;
-- do not use unsupported workarounds.
-
-If a command fails:
-
-- report the failing command;
-- explain the cause when identifiable;
-- do not hide validation failures.
-
-## Continuous integration and deployment
-
-CI comes from the reusable `web-` workflows of
-[cyr-ius/.github](https://github.com/cyr-ius/.github). After creating a project
-from this template (once `backend/uv.lock` and `frontend/package.json` exist),
-generate its workflows and Release Please files from a clone of that repository:
-
-```bash
-../dotgithub/web/sync.sh .
-```
-
-Then review the generated `ci.yml`, `docker.yml` and `publish.yml` (image name,
-title, description, port) and create the `DOCKERHUB_TOKEN` repository secret.
-
-Development happens on `dev`. Production releases go through Release Please:
-merge `dev` into the default branch with Conventional Commits (`feat:`, `fix:`),
-then merge the release pull request; the tag publishes the Docker image and the
-GitHub release. Do not push version tags by hand.
-
-## References
-
-For consistent development practices, use the following GitHub repositories as inspiration:
-
-- cyr-ius/powerdns-ui
-- cyr-ius/portalcrane
-- cyr-ius/wireguard-ui
-- cyr-ius/verifid
+Development then happens on `dev`. Releases go through Release Please with Conventional
+Commits (`feat:`, `fix:`...): merge `dev` into the default branch, then merge the release
+pull request; the tag publishes the Docker image and the GitHub release. Do not push version
+tags by hand.

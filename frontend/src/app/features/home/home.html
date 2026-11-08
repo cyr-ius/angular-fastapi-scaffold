@@ -1,0 +1,12 @@
+<nav class="navbar bg-body-tertiary">
+  <div class="container">
+    <span class="navbar-brand">{{ health()?.app }}</span>
+    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="auth.logout()">
+      <i class="bi bi-box-arrow-right"></i> Sign out
+    </button>
+  </div>
+</nav>
+<main class="container py-4">
+  <h1 class="h3">Welcome, {{ auth.currentUser()?.username }}</h1>
+  <p class="text-body-secondary">Version {{ health()?.version }}</p>
+</main>

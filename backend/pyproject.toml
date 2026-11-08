@@ -1,49 +1,60 @@
 [project]
-name = "MyProject"
+name = "app"
 version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
+description = "FastAPI backend of the application"
+readme = "../README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "aiosqlite>=0.22.1",
+    "alembic>=1.17",
     "bcrypt>=5.0.0",
-    "fastapi[standard]>=0.139.0",
-    "passlib[bcrypt]==1.7.4",
-    "pydantic-settings==2.14.2",
-    "python-jose[cryptography]==3.5.0",
-    "python-multipart==0.0.31",
-    "sqlmodel>=0.0.39",
+    "fastapi[standard]>=0.162.0",
+    "pydantic-settings>=2.15.0",
+    "pyjwt>=2.15.1",
+    "sqlalchemy[asyncio]>=2.0.44",
+    "sqlmodel>=0.0.48",
 ]
-
-[tool.setuptools]
-packages = ["backend"]
 
 [dependency-groups]
 dev = [
-    "mypy>=1.19.1",
-    "prek>=0.3.9",
-    "ruff>=0.15.8",
+    "mypy>=2.4.1",
+    "prek>=0.5.10",
+    "pytest>=9.0",
+    "pytest-xdist>=3.8",
+    "ruff>=0.15.21",
 ]
 
-# ── Ruff (linter PEP8) ──────────────────────────────────────────────────────
+# The backend runs from this directory (`app` package), it is not installed
+[tool.uv]
+package = false
+
+# ── Ruff ─────────────────────────────────────────────────────────────────────
 [tool.ruff]
 line-length = 100
 target-version = "py314"
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I", "B", "C4", "UP"]
+select = ["E", "F", "W", "I", "B", "C4", "UP", "N", "S", "ASYNC"]
 ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["app"]
 
-# ── Ruff — format ────────────────────────────────────────────────────────────
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
 line-ending = "lf"
 
-# ── Mypy (type checking) ─────────────────────────────────────────────────────
+# ── Mypy ─────────────────────────────────────────────────────────────────────
 [tool.mypy]
 python_version = "3.14"
 strict = true
 ignore_missing_imports = true
+
+# ── Pytest ───────────────────────────────────────────────────────────────────
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-n auto"

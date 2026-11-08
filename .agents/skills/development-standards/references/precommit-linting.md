@@ -82,21 +82,19 @@ rules:
 ## Exécution manuelle
 
 ```bash
-pre-commit run --all-files            # tous les hooks
-pre-commit run ruff-format --all-files
-pre-commit install                    # auto-run au commit
-pre-commit autoupdate                 # MAJ versions
+prek run --all-files                  # tous les hooks
+prek run ruff-format --all-files
+prek install                          # auto-run au commit
+prek autoupdate                       # MAJ versions
 git commit --no-verify                # désactiver (déconseillé)
 ```
 
 ## Workflow recommandé avant commit
 
 ```bash
-cd backend && ruff format . && cd ..
-cd frontend && npm run prettier && cd ..
-pre-commit run --all-files            # doit passer sans modification
-cd backend && python -m pytest && cd ..
-cd frontend && npm run test && cd ..
+prek run --all-files                          # tous les hooks, doit passer sans modification
+(cd backend && uv run mypy app && uv run pytest)
+(cd frontend && npm run build && npx ng test --watch=false)
 git add . && git commit -m "feat(scope): description"
 ```
 

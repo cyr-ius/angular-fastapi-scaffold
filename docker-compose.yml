@@ -1,0 +1,36 @@
+# Application built from the sources, to test a local build:
+#
+#   docker compose up -d --build
+#   docker compose logs app | grep -i password   # one-time admin password
+#
+# Listens on 127.0.0.1:8000 only; set DOCKER_PUBLISH_ADDRESS in .env to publish it
+# on another address. Behind plain HTTP (no TLS reverse proxy), set
+# COOKIE_SECURE=false or the browser will not send the session cookie back.
+# `docker compose down -v` deletes the database and the secret key.
+
+name: app
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        VERSION: ${VERSION:-dev}
+    image: app:dev
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+    ports:
+      - "${DOCKER_PUBLISH_ADDRESS:-127.0.0.1}:8000:8000"
+    volumes:
+      - app-data:/var/lib/app
+
+volumes:
+  app-data:

@@ -5,11 +5,11 @@
     "ghcr.io/devcontainers/features/python:1": {},
     "ghcr.io/devcontainers-extra/features/prek:1": {},
     "ghcr.io/devcontainers-extra/features/uv:1": {},
-    "ghcr.io/devcontainers/features/node:2.1.0": {},
+    "ghcr.io/devcontainers/features/node:2.1.0": {}
   },
   "mounts": [
     "source=${env:HOME}/.claude,target=/home/vscode/.claude,type=bind,consistency=cached",
-    "target=${containerWorkspaceFolder}/.data_env,type=volume,consistency=cached",
+    "target=${containerWorkspaceFolder}/.data_env,type=volume,consistency=cached"
   ],
   // ─── VS Code extensions ────────────────────────────────────────────────
   "customizations": {
@@ -39,8 +39,8 @@
           "editor.formatOnType": true,
           "editor.codeActionsOnSave": {
             "source.fixAll": "explicit",
-            "source.organizeImports": "explicit",
-          },
+            "source.organizeImports": "explicit"
+          }
         },
         "ruff.enable": true,
         "ruff.organizeImports": true,
@@ -48,17 +48,17 @@
         // ── TypeScript / Angular ─────────────────────────────────────────
         "[typescript]": {
           "editor.defaultFormatter": "esbenp.prettier-vscode",
-          "editor.formatOnSave": true,
+          "editor.formatOnSave": true
         },
         "[json]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
         },
         "[html]": {
           "editor.defaultFormatter": "esbenp.prettier-vscode",
-          "editor.formatOnSave": true,
+          "editor.formatOnSave": true
         },
         "[yaml]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
         },
         // ── Général ──────────────────────────────────────────────────────
         "editor.tabSize": 2,
@@ -66,9 +66,9 @@
         "files.eol": "\n",
         "files.insertFinalNewline": true,
         "files.trimTrailingWhitespace": true,
-        "prettier.printWidth": 120,
-      },
-    },
+        "prettier.printWidth": 120
+      }
+    }
   },
 
   // ─── Ports forwardés automatiquement ──────────────────────────────────
@@ -79,23 +79,23 @@
     "4200": {
       "label": "Angular Frontend",
       "onAutoForward": "notify",
-      "host": "0.0.0.0",
+      "host": "0.0.0.0"
     },
     "8000": {
       "label": "FastAPI Backend",
       "onAutoForward": "notify",
-      "host": "0.0.0.0",
-    },
+      "host": "0.0.0.0"
+    }
   },
 
   // ─── Environment varaibles ──────────────────────────────────────────────
   "containerEnv": {
-    "DATA_DIR": "${containerWorkspaceFolder}/.data_env", // (db, configuration files, etc...)
+    "DATA_DIR": "${containerWorkspaceFolder}/.data_env" // (db, configuration files, etc...)
   },
 
   // ─── Cycle de vie ──────────────────────────────────────────────────────
   "postCreateCommand": "bash .devcontainer/scripts/post-create.sh ${containerWorkspaceFolder}",
 
   // ─── Utilisateur non-root ──────────────────────────────────────────────
-  "remoteUser": "vscode",
+  "remoteUser": "vscode"
 }
