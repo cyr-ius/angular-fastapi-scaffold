@@ -19,17 +19,17 @@ Open <http://127.0.0.1:8000>. Behind plain HTTP (no TLS reverse proxy), set
 
 ## Settings
 
-| Variable                      | Default                  | Description                                     |
-| ----------------------------- | ------------------------ | ----------------------------------------------- |
-| `APP_NAME`                    | `App`                    | Name shown in the interface                     |
-| `DATA_DIR`                    | `/var/lib/app`           | Database and generated secret key               |
-| `DATABASE_URL`                | SQLite in `DATA_DIR`     | SQLAlchemy async URL                            |
-| `SECRET_KEY`                  | generated in `DATA_DIR`  | Signs the session tokens                        |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` | `480`                    | Session lifetime                                |
-| `COOKIE_SECURE`               | `true`                   | Send the session cookie over HTTPS only         |
-| `ADMIN_USERNAME`              | `admin`                  | Account created on the first start              |
-| `SWAGGER_ENABLED`             | `false`                  | Interactive API documentation on `/api/docs`    |
-| `LOG_LEVEL`                   | `INFO`                   | Python logging level                            |
+| Variable                      | Default                 | Description                                  |
+| ----------------------------- | ----------------------- | -------------------------------------------- |
+| `APP_NAME`                    | `App`                   | Name shown in the interface                  |
+| `DATA_DIR`                    | `/var/lib/app`          | Database and generated secret key            |
+| `DATABASE_URL`                | SQLite in `DATA_DIR`    | SQLAlchemy async URL                         |
+| `SECRET_KEY`                  | generated in `DATA_DIR` | Signs the session tokens                     |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | `480`                   | Session lifetime                             |
+| `COOKIE_SECURE`               | `true`                  | Send the session cookie over HTTPS only      |
+| `ADMIN_USERNAME`              | `admin`                 | Account created on the first start           |
+| `SWAGGER_ENABLED`             | `false`                 | Interactive API documentation on `/api/docs` |
+| `LOG_LEVEL`                   | `INFO`                  | Python logging level                         |
 
 ## Development
 
