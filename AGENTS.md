@@ -162,13 +162,24 @@ If a command fails:
 - explain the cause when identifiable;
 - do not hide validation failures.
 
-## Deployment
+## Continuous integration and deployment
 
-Production releases must use:
+CI comes from the reusable `web-` workflows of
+[cyr-ius/.github](https://github.com/cyr-ius/.github). After creating a project
+from this template (once `backend/uv.lock` and `frontend/package.json` exist),
+generate its workflows and Release Please files from a clone of that repository:
 
 ```bash
-scripts/release.sh
+../dotgithub/web/sync.sh .
 ```
+
+Then review the generated `ci.yml`, `docker.yml` and `publish.yml` (image name,
+title, description, port) and create the `DOCKERHUB_TOKEN` repository secret.
+
+Development happens on `dev`. Production releases go through Release Please:
+merge `dev` into the default branch with Conventional Commits (`feat:`, `fix:`),
+then merge the release pull request; the tag publishes the Docker image and the
+GitHub release. Do not push version tags by hand.
 
 ## References
 
