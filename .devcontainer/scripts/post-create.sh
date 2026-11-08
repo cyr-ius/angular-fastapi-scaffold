@@ -77,25 +77,11 @@ if [ -f "$BACKEND_DIR/alembic.ini" ]; then
   done
 fi
 
-# ── 6. Skills installation ─────────────────────────────────────────────────────
-# Framework skills only: the development standards come from the security-review
-# MCP server (see AGENTS.md and .mcp.json).
-echo ""
-echo "🧠  Skills — framework documentation..."
-cd "$WORKSPACE"
-npx --yes skills add https://github.com/fastapi/fastapi --skill fastapi -p -y
-npx --yes skills add https://github.com/angular/angular --skill angular-developer -p -y
-if [ ! -e "$WORKSPACE/.claude/skills" ]; then
-  mkdir -p "$WORKSPACE/.claude"
-  ln -s ../.agents/skills "$WORKSPACE/.claude/skills"
-fi
-echo "  ✅  Skills installed"
-
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  ✅  Setup terminé !"
 echo ""
 echo "  Backend  → cd backend && uvicorn app.main:app --reload --host 0.0.0.0"
 echo "  Frontend → cd frontend && ng serve --host 0.0.0.0"
-echo "  API docs → http://localhost:8000/docs"
+echo "  API docs → http://localhost:8000/api/docs (SWAGGER_ENABLED=true)"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

@@ -57,8 +57,10 @@ not hide the failure.
 
 ## Coding conventions
 
-The development standards are provided by the `security-review` MCP server (declared in
-`.mcp.json`, with `context7` for the framework documentation). Read them before writing code:
+The development standards are provided by the `security-review` MCP server, and the
+documentation of the frameworks (FastAPI, SQLModel, Angular...) by the `context7` MCP server;
+both are declared in `.mcp.json`, and no skill is needed. Read the standards before writing
+code:
 
 - tool `get_development_standards`, by technology (`python`, `angular`...) or by file
   (`pyproject.toml`, `angular.json`...);

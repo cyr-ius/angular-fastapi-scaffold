@@ -6,8 +6,3 @@
 
 # Node (cache of the prettier hook at the root)
 node_modules/
-
-# Skills installed by .devcontainer/scripts/post-create.sh
-.agents/skills/
-.claude/skills
-skills-lock.json
