@@ -6,3 +6,6 @@
 
 # Node (cache of the prettier hook at the root)
 node_modules/
+
+# Local MCP servers (may hold tokens)
+.mcp.json
