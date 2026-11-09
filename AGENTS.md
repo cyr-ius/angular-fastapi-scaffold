@@ -189,13 +189,16 @@ The workflows call the reusable `web-` workflows of
 [cyr-ius/.github](https://github.com/cyr-ius/.github): `ci.yml` (checks above),
 `docker.yml` (build and smoke test of the image on every pull request), `codeql.yml`.
 
-**After creating a project from this template:**
+**After creating a project from this template**, follow the "Application web" section of
+[the new repository guide](https://github.com/cyr-ius/.github/blob/main/docs/nouveau-depot.md)
+(in French). In short:
 
 1. Rename the application: `name` in `docker-compose.yml`, `APP_NAME` default in
    `app/config.py`, `<title>` in `frontend/src/index.html`.
 2. Create the `dev` branch and generate the release workflows (`publish.yml`, Release
    Please, docs) from a clone of cyr-ius/.github: `../dotgithub/web/sync.sh .`
-3. Create the `DOCKERHUB_TOKEN` repository secret.
+3. Create the `DOCKERHUB_TOKEN` and `DEV_SYNC_KEY` (deploy key) repository secrets and the
+   rulesets of the default branch and of `dev`.
 
 Development then happens on `dev`. Releases go through Release Please with Conventional
 Commits (`feat:`, `fix:`...): merge `dev` into the default branch, then merge the release
