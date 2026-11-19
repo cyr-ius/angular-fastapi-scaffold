@@ -10,7 +10,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # ─── Stage 2: Python dependencies ─────────────────────────────────────────
-FROM python:3.14-alpine AS backend-builder
+FROM python:3.15-alpine AS backend-builder
 
 COPY --from=ghcr.io/astral-sh/uv:0.13.6@sha256:af22a52f5eafef3d78e551599d405c02df61919d18028f0cea8eda93bc9986d0 /uv /usr/local/bin/uv
 
@@ -26,7 +26,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev
 
 # ─── Stage 3: runtime ─────────────────────────────────────────────────────
-FROM python:3.14-alpine
+FROM python:3.15-alpine
 
 RUN apk add --no-cache curl \
     && addgroup -S -g 1000 app \
